@@ -2,10 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
 const Dotenv = require('dotenv-webpack');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
 module.exports = {
     // mode: 'production', // LE INDICO EL MODO EXPLICITAMENTE
@@ -14,10 +11,12 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
         // resolve lo que hace es darnos la ruta absoluta de el S.O hasta nuestro archivo
         // para no tener conflictos entre Linux, Windows, etc
-        filename: '[name].[contenthash].js', 
+        filename: 'main.js', 
         // EL NOMBRE DEL ARCHIVO FINAL,
         assetModuleFilename: 'assets/images/[hash][ext][query]'
     },
+    mode: 'development',
+    watch: true,
     resolve: {
         extensions: ['.js'], // LOS ARCHIVOS QUE WEBPACK VA A LEER
         alias: {
@@ -56,7 +55,7 @@ module.exports = {
                         // Especifica el tipo MIME con el que se alineará el archivo. 
                         // Los MIME Types (Multipurpose Internet Mail Extensions)
                         // son la manera standard de mandar contenido a través de la red.
-                        name: "[name].[contenthash].[ext]",
+                        name: "[name].[ext]",
                         // EL NOMBRE INICIAL DEL PROYECTO + SU EXTENSIÓN
                         // PUEDES AGREGARLE [name]hola.[ext] y el output del archivo seria 
                         // ubuntu-regularhola.woff
@@ -77,9 +76,7 @@ module.exports = {
             template: './public/index.html', // LA RUTA AL TEMPLATE HTML
             filename: './index.html' // NOMBRE FINAL DEL ARCHIVO
         }),
-        new MiniCssExtractPlugin({
-            filename: 'assets/[name].[contenthash].css'
-        }), // INSTANCIAMOS EL PLUGIN
+        new MiniCssExtractPlugin(), // INSTANCIAMOS EL PLUGIN
         new CopyPlugin({ // CONFIGURACIÓN DEL COPY PLUGIN
             patterns: [
                 {
@@ -89,13 +86,5 @@ module.exports = {
             ]
         }),
         new Dotenv(),
-        new CleanWebpackPlugin()
-    ],
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new CssMinimizerPlugin(),
-            new TerserPlugin(),
-        ]
-    }
+    ]
 }
